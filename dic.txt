@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="greek">
+    <html lang="en">  
+         
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="style.css">
+<style>
+
+</style>
+</head>
+  <body>
+    <div id="myDIV">
+      </canvas>
+        <div id="myDIV" class="header">
+          <div class="button">      
+            <a href="https://www.google.com/search?client=opera&q=google+translate&sourceid=opera&ie=UTF-8&oe=UTF-8s" target="_blank">Google Translate</a>       
+          </div>
+             <h2 style="margin:5px">Personal Dictionary English-Greek . Εισαγάγετε τη νέα σας λέξη</h2>         
+              <input type="text" id="myInput" placeholder="Enter your new words . Εισαγάγετε τις νέες σας λέξεις">         
+               <span onclick="newElement()" class="addBtn">Add</span> 
+               <canvas id="canvas" width="70" height="70";
+                style="background-color:rgb(27, 15, 129)">
+           
+     </div>
+
+   <ul id="myUL"><!--this is empty to add a new word--></ul>
+
+<script src="script.js"></script>
+</body>
+</html>
+
+function myFunction() //create a function for the main header by getting its id//
+ {
+         document.getElementById("myDIV").style.backgroundSize = "100vh 100vw";
+ }
+   // ...................Create a "close" button and append it to each list item..................................//
+          var myNodelist = document.getElementsByTagName("LI"); // create a variable nodelist by tagneame li//
+             var i;                                             // create a loop for nodelist/
+                for (i = 0; i < myNodelist.length; i++) 
+                {
+                   var span = document.createElement("SPAN");
+                     var txt = document.createTextNode("\u00D7");
+                       span.className = "close";
+                        span.appendChild(txt);
+                          myNodelist[i].appendChild(span);
+               }
+  //.............................................................................................................//
+  //.................. Click on a close button to hide the current list item.....................................//
+         var close = document.getElementsByClassName("close");
+          var i;
+             for (i = 0; i < close.length; i++)
+             {
+               close[i].onclick = function()
+                {
+                  var div = this.parentElement;
+                    div.style.display = "none";
+                }
+             }
+  //.............................................................................................................//
+  // ....................Add a "checked" symbol when clicking on a list item.....................................//
+            var list = document.querySelector('ul');
+               list.addEventListener('click', function(ev)  
+               {
+                if (ev.target.tagName === 'LI') // symbol of check mark
+                {
+                      ev.target.classList.toggle('checked');
+                }
+               },
+                          false);
+  
+  // ..........................Create a new list item when clicking on the "Add" button..........................
+      function newElement()            // To Enter a word we need an function//
+      {
+       var li = document.createElement("li");                       // create a variable for li element//
+        var inputValue = document.getElementById("myInput").value; //create a variable to get the id of an element  for the input box//
+         var t = document.createTextNode(inputValue);   // create a variable to 
+            li.appendChild(t);
+
+        //.................................If enter is empty send an alert...........................................//    
+            if (inputValue === '') 
+            {
+                alert("You must write something!");
+             } else                  //if not get the  Entered text and the local variable li and an empty enter box//
+            {
+                  document.getElementById("myUL").appendChild(li);
+            }
+                     document.getElementById("myInput").value = "";
+        //.......................to close the new text box...........................................//
+          var span = document.createElement("SPAN");
+            var txt = document.createTextNode("\u00D7");//
+              span.className = "close";// it get the property of close class//
+                span.appendChild(txt);
+                  li.appendChild(span);
+  
+          for (i = 0; i < close.length; i++)
+           {
+           close[i].onclick = function()
+            {
+       var div = this.parentElement;
+           div.style.display = "none";     
+            }
+          }
+  }
+   //.................clock.........................//
+
+      var canvas = document.getElementById("canvas");
+var ctx = canvas.getContext("2d");
+var radius = canvas.height / 2;
+ctx.translate(radius, radius);
+radius = radius * 0.90
+setInterval(drawClock, 1000);
+
+function drawClock() {
+  drawFace(ctx, radius);
+  drawNumbers(ctx, radius);
+  drawTime(ctx, radius);
+}
+
+function drawFace(ctx, radius) {
+  var grad;
+  ctx.beginPath();
+  ctx.arc(0, 0, radius, 0, 2*Math.PI);
+  ctx.fillStyle = 'white';
+  ctx.fill();
+  grad = ctx.createRadialGradient(0,0,radius*0.95, 0,0,radius*1.05);
+  grad.addColorStop(0, '#333');
+  grad.addColorStop(0.5, 'white');
+  grad.addColorStop(1, '#333');
+  ctx.strokeStyle = grad;
+  ctx.lineWidth = radius*0.1;
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(0, 0, radius*0.1, 0, 2*Math.PI);
+  ctx.fillStyle = '#333';
+  ctx.fill();
+}
+
+function drawNumbers(ctx, radius) {
+  var ang;
+  var num;
+  ctx.font = radius*0.15 + "px arial";
+  ctx.textBaseline="middle";
+  ctx.textAlign="center";
+  for(num = 1; num < 13; num++){
+    ang = num * Math.PI / 6;
+    ctx.rotate(ang);
+    ctx.translate(0, -radius*0.85);
+    ctx.rotate(-ang);
+    ctx.fillText(num.toString(), 0, 0);
+    ctx.rotate(ang);
+    ctx.translate(0, radius*0.85);
+    ctx.rotate(-ang);
+  }
+}
+
+function drawTime(ctx, radius){
+    var now = new Date();
+    var hour = now.getHours();
+    var minute = now.getMinutes();
+    var second = now.getSeconds();
+    //hour
+    hour=hour%12;
+    hour=(hour*Math.PI/6)+
+    (minute*Math.PI/(6*60))+
+    (second*Math.PI/(360*60));
+    drawHand(ctx, hour, radius*0.5, radius*0.07);
+    //minute
+    minute=(minute*Math.PI/30)+(second*Math.PI/(30*60));
+    drawHand(ctx, minute, radius*0.8, radius*0.07);
+    // second
+    second=(second*Math.PI/30);
+    drawHand(ctx, second, radius*0.9, radius*0.02);
+}
+
+function drawHand(ctx, pos, length, width) {
+    ctx.beginPath();
+    ctx.lineWidth = width;
+    ctx.lineCap = "round";
+    ctx.moveTo(0,0);
+    ctx.rotate(pos);
+    ctx.lineTo(0, -length);
+    ctx.stroke();
+    ctx.rotate(-pos);
+}
+//................................................google translate........................................//
+function translate() {
+    var s = document.getElementByName("Search");
+    console.log("s");
+}
+body {
+  margin: 0;
+  min-width:500px;
+  border-radius: 0px;
+  margin-left:100px;
+  margin-top:50px;
+  margin-right:100px;
+  background-repeat:no-repeat;
+  background-color:rgb(37, 40, 187);
+  background-attachment: fixed;
+  background-position: center;
+  
+}
+ul {    /*the new word box */
+  margin: 0;
+  padding: 0;
+  color: #fff;
+
+}
+
+/* Style the list items */
+ul li {                   /*the second list item*/
+  cursor: pointer;
+  position: relative;
+  padding: 12px 8px 12px 40px;
+  list-style-type: none;
+  background: rgb(131, 144, 219);
+  font-size: 25px;                 /*   the font size of the second box*/
+  transition: 0.2s;
+  border-radius: 5px;
+
+  
+ 
+}
+
+/* Set all odd list items to a different color (zebra-stripes) */
+ul li:nth-child(odd) {     /*this is the first list item*/
+  background: #4b31be;
+  font-size: 25px;
+  color:whitesmoke;
+}
+
+/* Darker background-color on hover and make it bigger size */
+ul li:hover {
+  background: rgb(145, 117, 196);
+  color: #fff;
+  font-size: 40px;
+}
+
+/* When clicked on, add a background color and strike out text */
+ul li.checked {
+  background: rgb(74, 100, 218);
+  color: #fff;
+  font-size: 40px;
+
+
+}
+
+/* Add a "checked" mark when clicked on */
+ul li.checked::before {
+  content: '';
+  position: absolute;
+  border-color: rgb(3, 1, 29);
+  border-style: solid;
+  border-width: 0 2px 2px 0;
+  top: 20px;
+  left: 16px;
+  transform: rotate(30deg);
+  height: 20px;
+  width: 10px;
+}
+
+/* Style the close button x */
+.close {
+  position: absolute;
+  right:0;
+  top: 0;
+  padding: 12px 16px 12px 16px;
+}
+
+.close:hover {
+  background-color: #f44336;
+  color: white;
+}
+
+/* Style the header */
+.header {
+  background-color: #574c99;
+  background-image:url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNXhQ-X7QLejpH_FlFSrwvMm8eiiB9jsbF0A&usqp=CAU");
+  padding-right: 20px;
+  padding-top: 40px;
+  padding-bottom: 50px;
+  color: white;
+  text-align: center;
+  border-radius: 5px;
+  justify-content: space-between;
+font-size: 30px;
+
+}
+
+/* Clear floats after the header */
+.header:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* Style the input */
+input {
+  margin-left: 30px;
+  border: none;
+  border-radius: 0;
+  width: 75%;
+  padding: 10px;
+  float: left;
+  font-size: 20px;
+}
+
+/* Style the "Add" button */
+.addBtn {
+  padding: 10px;
+  width:100px;
+  background: #1c19a0;
+  color: rgb(240, 232, 232);
+  float: left;
+  text-align: center;
+  font-size: 20px;      
+  cursor: pointer;
+  transition: 0.3s;
+  border-radius: 0;
+  padding-right: 20px;
+}
+
+.addBtn:hover {
+  background-color: rgb(186, 182, 196);
+}
+/*....................google translate...................*/
+
+
+  
+  .button {
+    float: left;
+    padding-top:0px;
+    margin-top: 8px;
+    margin-left: 30px;
+    background: #ddd;
+    font-size: 20px;
+    border: none;
+    cursor: pointer;
+    width:140px;
+    justify-content: center;
+     color:black;
+
+  }
+  
+ 
